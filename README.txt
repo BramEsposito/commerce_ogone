@@ -37,7 +37,8 @@ Configuring Ogone
     --> Set both post-payment URLs to http://<your_website_address>/commerce-ogone/callback
     --> Request method can be POST or GET
     You can do the same for the setting "HTTP request for status changes" if needed.
-
+  * Dynamic e-Commerce parameters
+    --> Define which parameters will be sent back on the transaction feedback. Add AMOUNT and CURRENCY to selected parameters.
 
 Installing & configuring the Ogone payment method in Drupal Commerce
 ---------------------------------------------------------------------
