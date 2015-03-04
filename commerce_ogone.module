@@ -317,6 +317,7 @@ function commerce_ogone_process_callback($order, $payment_method) {
       return TRUE;
     }
   }
+  return FALSE;
 }
 
 /**
