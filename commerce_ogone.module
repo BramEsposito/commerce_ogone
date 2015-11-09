@@ -178,7 +178,7 @@ function commerce_ogone_build_redirect_form($form, &$form_state, $order, $settin
   // Get financial info
   $currency_code = $wrapper->commerce_order_total->currency_code->value();
   $amount = $wrapper->commerce_order_total->amount->value();
-  if (!empty($wrapper->commerce_customer_billing->value()->commerce_customer_address)) {
+  if (isset($wrapper->commerce_customer_billing) && !empty($wrapper->commerce_customer_billing->value()->commerce_customer_address)) {
     $customer_name = $wrapper->commerce_customer_billing->commerce_customer_address->name_line->value();
   }
   else {
