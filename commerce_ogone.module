@@ -61,6 +61,7 @@ function commerce_ogone_settings_form($settings = NULL) {
     'language' => '',
     'sha_in' => '',
     'sha_out' => '',
+    'algorithm' => variable_get('commerce_ogone_algorithm', 'sha1'),
     'language_list' => array(),
   );
 
@@ -131,6 +132,17 @@ function commerce_ogone_settings_form($settings = NULL) {
     '#title' => t('SHA-1-OUT Pass phrase'),
     '#description' => t('The SHA-1-OUT Pass phrase as entered in Ogone technical settings - "Transaction feedback" tab.'),
     '#default_value' => $settings['sha_out'],
+  );
+  $form['algorithm'] = array(
+    "#type" => "select", 
+    "#title" => t("Select your hash algorythm."), 
+    "#default_value" => $settings['algorithm'],
+    "#options" => array(
+    "sha1" => t("SHA-1"),
+    "sha256" => t("SHA-256"),
+    "sha512" => t("SHA-512"),
+    ),
+    "#description" => t("Select the algorithm you have set in the ogone configuration. SHA-1 by default."),
   );
 
   // @TODO: LAYOUT settings
@@ -231,7 +243,8 @@ function commerce_ogone_build_redirect_form($form, &$form_state, $order, $settin
     }
   }
   // Add the calculated SHA-1 string
-  $form['SHASign'] = array('#type' => 'hidden', '#value' => sha1($sha1_sig));
+  $algorithm = $settings['algorithm']; //variable_get('commerce_ogone_algorithm', 'sha1');
+  $form['SHASign'] = array('#type' => 'hidden', '#value' => hash($algorithm,$sha1_sig));
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -277,7 +290,8 @@ function commerce_ogone_valid_sha1_callback($order, $payment_method, $feedback) 
   module_load_include('inc', 'commerce_ogone', 'commerce_ogone.sha1');
   // Check if the received SHA-1 string is valid
   $sha1out = $payment_method['settings']['sha_out'];
-  if (!commerce_ogone_feedback_valid_sha1($feedback, $sha1out)) {
+  $algorithm = $payment_method['settings']['algorithm'];
+  if (!commerce_ogone_feedback_valid_sha1($feedback, $sha1out,$algorithm)) {
     watchdog('commerce_ogone', "SHA signature doesn't match", array(), WATCHDOG_ERROR);
     return FALSE;
   }
